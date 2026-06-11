@@ -6,9 +6,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import entidad.Alumno;
+
 import entidad.Concurso;
-import model.AlumnoModel;
+
 import model.ConcursoModel;
 import util.ValidateUtil;
 
@@ -16,7 +16,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import java.awt.Font;
-import javax.swing.SwingConstants;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;

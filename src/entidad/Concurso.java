@@ -12,5 +12,5 @@ public class Concurso {
 	private String nombre;
 	private LocalDate fechaInicio;
 	private LocalDate fechaFin;
-	private int estado;
+	private  int estado;
 }

@@ -1,6 +1,10 @@
 package model;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import entidad.Concurso;
 import util.MySqlDBConexion;
 
@@ -20,7 +24,7 @@ public class ConcursoModel {
 			pstm.setString(1, obj.getNombre());
 			pstm.setDate(2, java.sql.Date.valueOf(obj.getFechaInicio()));
 			pstm.setDate(3, java.sql.Date.valueOf(obj.getFechaFin()));
-			pstm.setString(4, obj.getEstado());
+			pstm.setLong(4, obj.getEstado());   
 
 			//3 Ejecutar sentencia SQL
 			salida = pstm.executeUpdate();
@@ -40,4 +44,54 @@ public class ConcursoModel {
 	
 	}
 
+	public List<Concurso> listaConcurso(String nombre, LocalDate desde, LocalDate hasta) {
+	    ArrayList<Concurso> lista = new ArrayList<Concurso>();
+	    Connection conn = null;
+	    PreparedStatement pstm = null;
+	    ResultSet rs = null;
+	    
+	    try {
+	        conn = MySqlDBConexion.getConexion();
+	        String sql = "SELECT * FROM concurso WHERE "
+	                + " nombre LIKE ? AND "
+	                + " ( ? ='9999-01-01' or fechaInicio > ? ) AND "
+	                + " ( ? ='9999-01-01' or fechaInicio < ? ) ";
+	        pstm = conn.prepareStatement(sql);
+	        pstm.setString(1, "%" + nombre + "%");
+	        pstm.setDate(2, java.sql.Date.valueOf(desde));  
+	        pstm.setDate(3, java.sql.Date.valueOf(desde));
+	        pstm.setDate(4, java.sql.Date.valueOf(hasta));  
+	        pstm.setDate(5, java.sql.Date.valueOf(hasta));
+	        
+	        System.out.println("SQL: " + pstm.toString());
+	        
+	        rs = pstm.executeQuery();
+
+	        while (rs.next()) {
+	            Concurso c = new Concurso();
+	            c.setIdConcurso(rs.getInt("idConcurso"));
+	            c.setNombre(rs.getString("nombre"));
+	            c.setFechaInicio(rs.getDate("fechaInicio").toLocalDate());
+	            c.setFechaFin(rs.getDate("fechaFin").toLocalDate());
+	            c.setEstado(rs.getInt("estado")); 
+	            lista.add(c);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        try {
+	            if (rs != null)
+	                rs.close();
+	            if (pstm != null)
+	                pstm.close();
+	            if (conn != null)
+	                conn.close();
+	        } catch (Exception e2) {
+	            e2.printStackTrace();
+	        }
+	    }
+	    
+	    return lista;
+	}
+	
 }
